@@ -36,6 +36,13 @@ object Scenarios {
       .check(bodyString is "PONG")
     )
 
+  val sendfile = scenario("sendfile")
+    .exec(
+      http("/sendfile")
+      .get("/sendfile")
+      .check(md5 is "cd573cfaace07e7949bc0c46028904ff")
+    )
+
   val sha512 = scenario("SHA-512")
     .exec(
       http("/sha512")
@@ -88,6 +95,13 @@ class SocketIOSimulation extends Simulation {
   import Scenarios._
   setUp(
     socketIO.inject(rampUsersPerSec(0.1) to(400) during(1 minute) randomized)
+  ).protocols(httpProtocol)
+}
+
+class SendfileSimulation extends Simulation {
+  import Scenarios._
+  setUp(
+    sendfile.inject(rampUsersPerSec(0.1) to(20) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 
