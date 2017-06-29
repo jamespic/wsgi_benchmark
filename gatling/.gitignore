@@ -1,0 +1,5 @@
+.ensime
+.ensime_cache/
+effective.pom
+dependency-reduced-pom.xml
+.classpath

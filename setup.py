@@ -15,7 +15,8 @@ setup(
         'werkzeug',
         'gunicorn',
         'gevent',
-        'eventlet'
+        'eventlet',
+        'meinheld'
     ],
     ext_modules=[
         Extension('wsgi_benchmark.native',
