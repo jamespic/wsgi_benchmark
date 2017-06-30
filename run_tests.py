@@ -7,13 +7,23 @@ import signal
 SERVERS = {
     'bjoern': ['python', '-m', 'wsgi_benchmark.bjoern_server'],
     'cheroot': ['python', '-m', 'wsgi_benchmark.cheroot_server'],
+    'cheroot_high_concurrency': ['python', '-m', 'wsgi_benchmark.high_concurrency_cheroot_server'],
     'eventlet': ['python', '-m', 'wsgi_benchmark.eventlet_server'],
     'gunicorn': ['./gunicorn_server.sh'],
+    'gunicorn_gevent': ['./gevent_gunicorn_server.sh'],
+    'gunicorn_gthread': ['./gthread_gunicorn_server.sh'],
+    'gunicorn_eventlet': ['./eventlet_gunicorn_server.sh'],
+    'gunicorn_high_concurrency': ['./high_concurrency_gunicorn_server.sh'],
     'gevent': ['python', '-m', 'wsgi_benchmark.gevent_server'],
     'meinheld': ['python', '-m', 'wsgi_benchmark.meinheld_server'],
     'waitress': ['python', '-m', 'wsgi_benchmark.waitress_server'],
+    'waitress_high_concurrency': ['python', '-m', 'wsgi_benchmark.high_concurrency_waitress_server'],
     'werkzeug': ['python', '-m', 'wsgi_benchmark.werkzeug_server'],
-    'wsgiref': ['python', '-m', 'wsgi_benchmark.wsgiref_server']
+    'werkzeug_threading': ['python', '-m', 'wsgi_benchmark.threading_werkzeug_server'],
+    'werkzeug_forking': ['python', '-m', 'wsgi_benchmark.forking_werkzeug_server'],
+    'wsgiref': ['python', '-m', 'wsgi_benchmark.wsgiref_server'],
+    'wsgiref_threading': ['python', '-m', 'wsgi_benchmark.threading_wsgiref_server'],
+    'wsgiref_forking': ['python', '-m', 'wsgi_benchmark.forking_wsgiref_server']
 }
 
 GATLING_SCENARIOS = {

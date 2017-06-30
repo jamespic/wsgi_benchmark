@@ -55,7 +55,7 @@ object Scenarios {
     .exec(
       http("/forward_request")
       .post("/forward_request")
-      .body(ByteArrayBody(Array.fill(1048576)(0.toByte)))
+      .body(ByteArrayBody(Array.fill(262144)(0.toByte)))
       .check(bodyString is "Success")
     )
 
@@ -108,14 +108,14 @@ class SendfileSimulation extends Simulation {
 class SHA512Simulation extends Simulation {
   import Scenarios._
   setUp(
-    sha512.inject(rampUsersPerSec(0.1) to(400) during(1 minute) randomized)
+    sha512.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 
 class ForwardSimulation extends Simulation {
   import Scenarios._
   setUp(
-    forwardRequest.inject(rampUsersPerSec(0.1) to(400) during(1 minute) randomized)
+    forwardRequest.inject(rampUsersPerSec(0.1) to(50) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 
