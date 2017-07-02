@@ -40,7 +40,14 @@ object Scenarios {
     .exec(
       http("/sendfile")
       .get("/sendfile")
-      .check(md5 is "cd573cfaace07e7949bc0c46028904ff")
+      .check(md5 is "b6d81b360a5672d80c27430f39153e2c")
+    )
+
+  val pushWrite = scenario("Push Write")
+    .exec(
+      http("/push_write")
+      .get("/push_write")
+      .check(md5 is "b6d81b360a5672d80c27430f39153e2c")
     )
 
   val sha512 = scenario("SHA-512")
@@ -87,21 +94,28 @@ class NumericNoGilSimulation extends Simulation {
 class NativeIOSimulation extends Simulation {
   import Scenarios._
   setUp(
-    nativeIO.inject(rampUsersPerSec(0.1) to(400) during(1 minute) randomized)
+    nativeIO.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 
 class SocketIOSimulation extends Simulation {
   import Scenarios._
   setUp(
-    socketIO.inject(rampUsersPerSec(0.1) to(400) during(1 minute) randomized)
+    socketIO.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
+  ).protocols(httpProtocol)
+}
+
+class PushWriteSimulation extends Simulation {
+  import Scenarios._
+  setUp(
+    pushWrite.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 
 class SendfileSimulation extends Simulation {
   import Scenarios._
   setUp(
-    sendfile.inject(rampUsersPerSec(0.1) to(20) during(1 minute) randomized)
+    sendfile.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 

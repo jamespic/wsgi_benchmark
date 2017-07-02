@@ -9,7 +9,8 @@ import subprocess
 import sys
 import tempfile
 import zlib
-from werkzeug.wsgi import get_input_stream, wrap_file, pop_path_info
+from werkzeug.wsgi import get_input_stream
+from wsgiref.util import FileWrapper, shift_path_info
 from wsgi_benchmark.native import triangular_nogil, native_wait
 
 
@@ -30,7 +31,7 @@ def ping():
 
 fd, served_file = tempfile.mkstemp()
 with os.fdopen(fd, 'w') as f:
-    f.truncate(1024 ** 3)  # 1GB
+    f.truncate(1024 ** 2)  # 1MB
 
 
 @atexit.register
@@ -73,7 +74,7 @@ def interrupted(environ, start_response):
 
 def sha512(environ, start_response):
     digest = hashlib.sha512()
-    body = get_input_stream(environ)
+    body = get_input_stream(environ, safe_fallback=False)
     while True:
         data = body.read(65536)
         if data == '':
@@ -85,7 +86,7 @@ def sha512(environ, start_response):
 
 def gzip(environ, start_response):
     compressor = zlib.compressobj(9, zlib.DEFLATED, 31)
-    body = get_input_stream(environ)
+    body = get_input_stream(environ, safe_fallback=False)
     start_response('200 OK', BINARY_HEADER)
     while True:
         data = body.read(65536)
@@ -96,7 +97,7 @@ def gzip(environ, start_response):
 
 
 def forward_request(environ, start_response):
-    body = get_input_stream(environ)
+    body = get_input_stream(environ, safe_fallback=False)
     while True:
         data = body.read(65536)
         if data == '':
@@ -108,8 +109,17 @@ def forward_request(environ, start_response):
 
 def serve_file(environ, start_response):
     f = open(served_file)
+    wrapper = environ.get('wsgi.file_wrapper', FileWrapper)
     start_response('200 OK', BINARY_HEADER)
-    return wrap_file(environ, f)
+    return wrapper(f)
+
+
+def push_write(environ, start_response):
+    writer = start_response('200 OK', TEXT_HEADER)
+    chunk = '\0' * 1024
+    for _ in xrange(1024):
+        writer(chunk)
+    return []
 
 
 def http404(environ, start_response):
@@ -125,11 +135,12 @@ _handlers = {
     'sha512': sha512,
     'forward_request': forward_request,
     'sendfile': serve_file,
+    'push_write': push_write,
     'interrupted': interrupted,
     'gzip': gzip
 }
 
 
 def app(environ, start_response):
-    path = pop_path_info(environ)
+    path = shift_path_info(environ)
     return _handlers.get(path, http404)(environ, start_response)
