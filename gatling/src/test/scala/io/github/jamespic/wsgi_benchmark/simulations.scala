@@ -43,6 +43,13 @@ object Scenarios {
       .check(md5 is "b6d81b360a5672d80c27430f39153e2c")
     )
 
+  val dynamicFile = scenario("Dynamic File")
+    .exec(
+      http("/sendfile")
+      .get("/sendfile")
+      .check(md5 is "b6d81b360a5672d80c27430f39153e2c")
+    )
+
   val pushWrite = scenario("Push Write")
     .exec(
       http("/push_write")
@@ -109,6 +116,13 @@ class PushWriteSimulation extends Simulation {
   import Scenarios._
   setUp(
     pushWrite.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
+  ).protocols(httpProtocol)
+}
+
+class DynamicFileSimulation extends Simulation {
+  import Scenarios._
+  setUp(
+    dynamicFile.inject(rampUsersPerSec(0.1) to(800) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 

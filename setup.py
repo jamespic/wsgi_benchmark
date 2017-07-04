@@ -17,7 +17,8 @@ setup(
         'gevent',
         'eventlet',
         'meinheld',
-        'futures'
+        'futures',
+        'uwsgi'
     ],
     ext_modules=[
         Extension('wsgi_benchmark.native',

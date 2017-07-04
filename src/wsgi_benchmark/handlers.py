@@ -115,11 +115,18 @@ def serve_file(environ, start_response):
 
 
 def push_write(environ, start_response):
-    writer = start_response('200 OK', TEXT_HEADER)
+    writer = start_response('200 OK', BINARY_HEADER)
     chunk = '\0' * 1024
     for _ in xrange(1024):
         writer(chunk)
     return []
+
+
+def dynamic_file(environ, start_response):
+    start_response('200 OK', BINARY_HEADER)
+    chunk = '\0' * 1024
+    for _ in xrange(1024):
+        yield chunk
 
 
 def http404(environ, start_response):
@@ -135,6 +142,7 @@ _handlers = {
     'sha512': sha512,
     'forward_request': forward_request,
     'sendfile': serve_file,
+    'dynamic_file': dynamic_file,
     'push_write': push_write,
     'interrupted': interrupted,
     'gzip': gzip
@@ -144,3 +152,5 @@ _handlers = {
 def app(environ, start_response):
     path = shift_path_info(environ)
     return _handlers.get(path, http404)(environ, start_response)
+
+application = app
