@@ -8,10 +8,11 @@ if __name__ == '__main__':
     results = {}
 
     for result in os.listdir('gatling/target/gatling'):
-        test_name, server_name, _ = result.split('-')
-        test_names.add(test_name)
-        server_names.add(server_name)
-        results[(test_name, server_name)] = result
+        if os.path.isdir(os.path.join('gatling/target/gatling', result)):
+            test_name, server_name, _ = result.split('-')
+            test_names.add(test_name)
+            server_names.add(server_name)
+            results[(test_name, server_name)] = result
 
     test_names = sorted(test_names)
     server_names = sorted(server_names)

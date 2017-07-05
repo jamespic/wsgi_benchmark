@@ -50,7 +50,7 @@ def server(command):
             command, stderr=dev_null, stdout=dev_null)
         print "Running", server_name, "pid", server_process.pid
         try:
-            for i in xrange(15):
+            for i in xrange(30):
                 try:
                     assert urllib2.urlopen('http://localhost:8765/hello_world').read() == 'Hello World'
                 except:
@@ -58,11 +58,11 @@ def server(command):
                 else:
                     break
             else:
-                raise RuntimeError("Could not start server process: {}" .format(server_command))
+                raise RuntimeError("Could not start server process: {}" .format(command))
             yield
         finally:
             server_process.terminate()
-            for i in xrange(15):
+            for i in xrange(30):
                 if server_process.poll() is not None:
                     break
                 else:
@@ -81,9 +81,12 @@ if __name__ == '__main__':
     with open('results/misc_results.txt', 'w') as misc_results:
         for server_name, command in sorted(SERVERS.items()):
             with server(command):
-                hash_result = subprocess.check_output(
-                    'head -c 65536 /dev/zero | sha512sum', shell=True)
-                success = hash_result == '73e4153936dab198397b74ee9efc26093dda721eaab2f8d92786891153b45b04265a161b169c988edb0db2c53124607b6eaaa816559c5ce54f3dbc9fa6a7a4b2'
+                try:
+                    hash_result = subprocess.check_output(
+                        'head -c 65536 /dev/zero | curl -T - -y 5 http://localhost:8765/sha512', shell=True)
+                    success = hash_result == '73e4153936dab198397b74ee9efc26093dda721eaab2f8d92786891153b45b04265a161b169c988edb0db2c53124607b6eaaa816559c5ce54f3dbc9fa6a7a4b2'
+                except:
+                    success = False
                 misc_results.write(
                     '{server_name}-chunked: {success}\n'.format(**locals()))
 
@@ -129,6 +132,7 @@ if __name__ == '__main__':
                             '-Dgatling.simulationClass=io.github.jamespic.wsgi_benchmark.%s' % scenario_class,
                             '-Dgatling.outputName=%s-%s' % (
                                 scenario_name, server_name),
+                            '-Dgatling.resultsFolder=results'
                             'integration-test'
 
                         ],
