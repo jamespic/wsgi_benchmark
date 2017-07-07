@@ -50,6 +50,12 @@ def numeric_nogil(environ, start_response):
     return [result]
 
 
+def numeric_gil(environ, start_response):
+    result = str(sum(xrange(200000000)))
+    start_response('200 OK', TEXT_HEADER)
+    return [result]
+
+
 def native_io(environ, start_response):
     native_wait(1.0)
     start_response('200 OK', TEXT_HEADER)
@@ -137,6 +143,7 @@ def http404(environ, start_response):
 _handlers = {
     'hello_world': hello_world,
     'numeric_nogil': numeric_nogil,
+    'numeric_gil': numeric_gil,
     'native_io': native_io,
     'socket_io': socket_io,
     'sha512': sha512,

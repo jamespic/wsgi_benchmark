@@ -7,8 +7,8 @@ if __name__ == '__main__':
     server_names = set()
     results = {}
 
-    for result in os.listdir('gatling/target/gatling'):
-        if os.path.isdir(os.path.join('gatling/target/gatling', result)):
+    for result in os.listdir('results'):
+        if os.path.isdir(os.path.join('results', result)):
             test_name, server_name, _ = result.split('-')
             test_names.add(test_name)
             server_names.add(server_name)
@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 if result is None:
                     output.write('<td>N/A</td>')
                     continue
-                with open(os.path.join('gatling/target/gatling', result, 'simulation.log')) as simulation_log:
+                with open(os.path.join('results', result, 'simulation.log')) as simulation_log:
                     requests = []
                     for row in simulation_log:
                         row = row.split('\t')

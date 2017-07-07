@@ -39,7 +39,8 @@ GATLING_SCENARIOS = {
     'dynamic_file': 'DynamicFileSimulation',
     'sha512': 'SHA512Simulation',
     'forward_request': 'ForwardSimulation',
-    'gzip': 'GzipSimulation'
+    'gzip': 'GzipSimulation',
+    'numeric_gil': 'NumericGilSimulation'
 }
 
 
@@ -132,7 +133,7 @@ if __name__ == '__main__':
                             '-Dgatling.simulationClass=io.github.jamespic.wsgi_benchmark.%s' % scenario_class,
                             '-Dgatling.outputName=%s-%s' % (
                                 scenario_name, server_name),
-                            '-Dgatling.resultsFolder=results'
+                            '-Dgatling.resultsFolder=../results',
                             'integration-test'
 
                         ],

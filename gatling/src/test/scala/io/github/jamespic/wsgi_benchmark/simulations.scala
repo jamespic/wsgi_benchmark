@@ -22,6 +22,13 @@ object Scenarios {
       .check(status is 200)
     )
 
+  val numericGil = scenario("Numeric GIL")
+    .exec(
+      http("/numeric_gil")
+      .get("/numeric_gil")
+      .check(bodyString is "19999999900000000")
+    )
+
   val nativeIO = scenario("Native IO")
     .exec(
       http("/native_io")
@@ -88,6 +95,13 @@ class HelloWorldSimulation extends Simulation {
   import Scenarios._
   setUp(
     helloWorld.inject(rampUsersPerSec(0.1) to(1000) during(1 minute) randomized)
+  ).protocols(httpProtocol)
+}
+
+class NumericGilSimulation extends Simulation {
+  import Scenarios._
+  setUp(
+    numericGil.inject(rampUsersPerSec(0.1) to(16) during(1 minute) randomized)
   ).protocols(httpProtocol)
 }
 
