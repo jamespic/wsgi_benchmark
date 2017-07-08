@@ -1,0 +1,38 @@
+---
+
+# This set of tasks is responsible for taking a deb file, located on the build server, copying it onto the
+# server into which it needs to be installed, installing it from the deb file and, in the case of a development
+# machine where the source folders are mounted into /media/nts, creating an egg-link file in the virtualenv
+# so that dynamic code changes are still possible
+
+- name: Create temp working directory
+  command: mktemp -d
+  register: tempdir_output
+  tags:
+    - always
+
+- name: Copy local ALI UI package to remote
+  copy:
+    src: "{{ playbook_dir }}/../{{ susplus_aliui_packagename }}_{{ susplus_codebase_version }}_amd64.deb"
+    dest: "{{ tempdir_output.stdout }}/"
+    force: yes
+
+- name: Install ALI UI to deploy application code from local filesystem
+  apt:
+    deb: "{{ tempdir_output.stdout }}/{{ susplus_aliui_packagename }}_{{ susplus_codebase_version }}_amd64.deb"
+    force: yes
+    state: installed
+  # Apt retry added to allow multiple roles to be applied to servers in parallel
+  # specifically for the V&P environment
+  register: result
+  until: result|succeeded
+  retries: 3
+  delay: 60
+
+- name: Remove temp working directory
+  become: true
+  file:
+    path: "{{ tempdir_output.stdout }}"
+    state: absent
+  tags:
+    - always

@@ -52,8 +52,8 @@ object Scenarios {
 
   val dynamicFile = scenario("Dynamic File")
     .exec(
-      http("/sendfile")
-      .get("/sendfile")
+      http("/dynamic_file")
+      .get("/dynamic_file")
       .check(md5 is "b6d81b360a5672d80c27430f39153e2c")
     )
 
@@ -88,7 +88,8 @@ object Scenarios {
       .check(sha1 is "480d862eb69d8d083be4391e7472d3018a779ba4")
     )
 
-  val httpProtocol = http.baseURL("http://localhost:8765")
+  val targetHostname = sys.env.getOrElse("TARGET_HOSTNAME", "localhost")
+  val httpProtocol = http.baseURL(s"http://${targetHostname}:8765")
 }
 
 class HelloWorldSimulation extends Simulation {

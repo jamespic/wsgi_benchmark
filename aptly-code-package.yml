@@ -1,0 +1,13 @@
+---
+
+- name: Install ALI UI to deploy application code
+  apt:
+    name: "{{ susplus_aliui_packagename }}={{ susplus_codebase_version }}"
+    force: yes
+    state: installed
+  # Apt retry added to allow multiple roles to be applied to servers in parallel
+  # specifically for the V&P environment
+  register: result
+  until: result|succeeded
+  retries: 3
+  delay: 60

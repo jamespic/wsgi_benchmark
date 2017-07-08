@@ -1,0 +1,16 @@
+gatling/target
+gatling/.*
+gatling/effective.pom
+results
+.eggs
+.git
+build
+wsgi_benchmark.egg-info
+src/wsgi_benchmark/*.pyc
+src/wsgi_benchmark/*.c
+src/wsgi_benchmark/*.so
+src/wsgi_benchmark.egg_info
+run_tests.py
+*.pyc
+Dockerfile
+.dockerignore

@@ -18,7 +18,8 @@ setup(
         'eventlet',
         'meinheld',
         'futures',
-        'uwsgi'
+        'uwsgi',
+        'docker'
     ],
     ext_modules=[
         Extension('wsgi_benchmark.native',
